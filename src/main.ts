@@ -16,10 +16,6 @@ export default class DebugPlugin extends Plugin {
 		this.addRibbonIcon("bug", "Debug Tool View", () => {
       this.activateView();
 		});
-		
-
-		this.registerEvent(this.app.workspace.on("active-leaf-change", this.handlecMenuToolbar));	// 叶子节点切换
-    this.registerEvent(this.app.workspace.on("layout-change", this.handlecMenuToolbar_layout));	// 布局切换
 	}
 
 	async onunload() {
@@ -39,10 +35,4 @@ export default class DebugPlugin extends Plugin {
       this.app.workspace.getLeavesOfType(VIEW_TYPE_DEBUGTOOL)[0]
     );
 	}
-	
-	handlecMenuToolbar(leaf: WorkspaceLeaf | null){
-		console.log(leaf)
-	}
-
-	handlecMenuToolbar_layout(){}
 }

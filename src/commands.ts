@@ -20,10 +20,14 @@ export let command_list_1 = [
     name: "（先运行该命令）指定编辑器",
     callback: () => {
       let name = "（先运行该命令）指定编辑器"
-      is_chang_view = true
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n变量获取失败。请先确保先聚焦到md文档再运行此命令`); return}
-      is_chang_view = false
-      console.log(`【${name}】\n`, "指定成功");
+      if (is_change_view == true){
+        let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n变量获取失败。请先确保先聚焦到md文档再运行此命令`); return}
+        is_change_view = false
+        console.log(`【${name}】\n`, "指定成功");
+      } else {
+        is_change_view = true
+        console.log(`【${name}】\n`, "解锁成功");
+      }
     }
   }
 ]
@@ -92,15 +96,39 @@ export let command_list = [
           "\n【内容】\n", editVar.editor.getValue());
         }
       },
+      {
+        name: "获取md编辑器dom",
+        callback: () => {
+          let name = "获取md编辑器dom"
+          let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n变量获取失败。请先聚焦到md文档并Ctrl+P运行：指定编辑器`); return}
+          console.log(`【${name}】\n`, prev_md_dom);
+        }
+      },
+      {
+        name: "获取md编辑器显示模式",
+        callback: () => {
+          let name = "获取md编辑器显示模式"
+          let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n变量获取失败。请先聚焦到md文档并Ctrl+P运行：指定编辑器`); return}
+          let dom = prev_md_dom?.getElementsByClassName("workspace-leaf-content")[0]
+          let data_mode = dom?.getAttribute("data-mode")
+          if (data_mode=="source") {
+            dom = dom?.getElementsByClassName("markdown-source-view")[0]
+            if(dom?.classList.contains('is-live-preview')) data_mode="实时模式"
+            else data_mode="源码模式"
+          }
+          else if (data_mode=="preview") data_mode="渲染模式"
+          console.log(`【${name}】\n`, data_mode);
+        }
+      },
     ]
   },
   {
     name: "DOM类",
     children: [
       {
-        name: "打印当前document",
+        name: "打印document",
         callback: () => {
-          let name = "打印当前document"
+          let name = "打印document"
           console.log(`【${name}】\n`, document);
         }
       },
@@ -108,7 +136,7 @@ export let command_list = [
         name: "打印当前主workspace-leaf",
         callback: () => {
           let name = "打印当前主workspace-leaf"
-          console.log(`【${name}】\n`, document.getElementsByClassName("mod-root"));
+          console.log(`【${name}】\n`, document.getElementsByClassName("mod-root"))
         }
       },
       {
@@ -168,10 +196,17 @@ export let command_list = [
 ]
 
 /** 获取编辑相关的变量 */
-let is_chang_view = true
+let is_change_view = true
 let prev_view: View|null = null
+let prev_md_dom: Element|null = null
 function get_edit_variable(){
-  if (is_chang_view) prev_view = this.app.workspace.getActiveViewOfType(MarkdownView); // 未聚焦到md文档会返回null
+  if (is_change_view) {
+    prev_view = this.app.workspace.getActiveViewOfType(MarkdownView); // 未聚焦到md文档会返回null
+    let doms = document.getElementsByClassName("workspace-tabs mod-top mod-active")
+    if (doms && doms.length) {
+      prev_md_dom = doms[0].getElementsByClassName("workspace-leaf mod-active")[0]
+    }
+  }
   if (!prev_view) return null
     // @ts-ignore 这里会说View没有editor属性
   const editor: Editor = prev_view.editor
