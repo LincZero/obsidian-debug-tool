@@ -17,6 +17,20 @@ export function addCommands(plugin_this: DebugPlugin){
 /** 命令列表 */
 let command_list = [
   {
+    name: "（慎用）运行选中片段",
+    callback: () => {
+      let name = "（慎用）运行选中片段"
+      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 获取编辑状态失败`); return}
+      console.log(`【${name}】\n`, "（暂时无法使用该功能）");
+      /*try{
+        eval(editVar.editor.getSelection())
+      }
+      catch{
+        console.log("cann't use eval function")
+      }*/
+    }
+  },
+  {
     name: "获取常用编程手册",
     callback: () => {
       let name = "获取常用编程手册"
@@ -69,6 +83,20 @@ let command_list = [
     name: "dvjs - 获取当前库",
     callback: () => {
       let name = "dvjs - 获取当前库"
+      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 获取编辑状态失败`); return}
+      let dvjsContent = `console.log("【${name}】\\n", app.vault.getMarkdownFiles())`
+      editVar.editor.replaceSelection(
+        "```dataviewjs\n"+
+        `${dvjsContent}\n`+
+        `dv.list(["【${name}】输出见控制台"])\n`+
+        "```"
+      )
+    }
+  },
+  {
+    name: "启用事件监听",
+    callback: () => {
+      let name = "启用事件监听"
       let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 获取编辑状态失败`); return}
       let dvjsContent = `console.log("【${name}】\\n", app.vault.getMarkdownFiles())`
       editVar.editor.replaceSelection(
