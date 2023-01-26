@@ -12,6 +12,7 @@ export default class DebugPlugin extends Plugin {
 			VIEW_TYPE_DEBUGTOOL, 
 			(leaf: WorkspaceLeaf) => this.view = new CommandView(leaf)
 		);
+		this.activateView();
 
 		this.addRibbonIcon("bug", "Debug Tool View", () => {
       this.activateView();

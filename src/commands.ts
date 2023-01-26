@@ -81,9 +81,25 @@ export let command_list = [
         callback: () => {
           let name = "获取光标相关"
           let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n变量获取失败。请先聚焦到md文档并Ctrl+P运行：指定编辑器`); return}
+          let n_from = 0
+          let n_to = 0
+          let list_text: string[] = editVar.editor.getValue().split("\n")
+          for (let i=0; i<=editVar.editor.getCursor("to").line; i++){
+            if (editVar.editor.getCursor("from").line == i) {n_from = n_to+editVar.editor.getCursor("from").ch}
+            if (editVar.editor.getCursor("to").line == i) {n_to = n_to+editVar.editor.getCursor("to").ch; break;}
+            n_to += list_text[i].length
+          }
           console.log(`【${name}】`,
-          "\n【光标的位置】\n", `第${editVar.editor.getCursor().line}行的第${editVar.editor.getCursor().ch}个字符`,
-          "\n【选择的内容】\n", editVar.editor.getSelection());
+            {
+              text_select: "【选择的内容】:"+editVar.editor.getSelection()??"（没有选择）",
+              text_cursor: `【光标的位置】: 第${editVar.editor.getCursor().line}行的第${editVar.editor.getCursor().ch}个字符`,
+              pos_cursor: editVar.editor.getCursor(),
+              pos_from: editVar.editor.getCursor("from"),
+              pos_to: editVar.editor.getCursor("to"),
+              number_from: n_from,
+              number_to: n_to
+            }
+          );
         }
       },
       {
