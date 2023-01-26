@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-debug-tool",
 	"name": "Debug Tool",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"minAppVersion": "0.15.0",
 	"description": "Fast debug obsidian, could print some common global variable, help to develop plugin.",
 	"author": "LincZero",

@@ -1,11 +1,11 @@
 import {EditorView} from "@codemirror/view"
-import { App, Editor, MarkdownView, Notice, View } from 'obsidian';
+import { App, Editor, MarkdownView, Notice, View, Workspace } from 'obsidian';
 import DebugPlugin from "./main"
 
 export function addCommands(plugin_this: DebugPlugin){
   
-  for (let i=0; i<command_list.length; i++){
-    let command_item = command_list[i]
+  for (let i=0; i<command_list_1.length; i++){
+    let command_item = command_list_1[i]
     this.addCommand({
       id: 'debug-tool-'+i,
       name: command_item.name,
@@ -15,12 +15,26 @@ export function addCommands(plugin_this: DebugPlugin){
 }
 
 /** 命令列表 */
-let command_list = [
+export let command_list_1 = [
+  {
+    name: "（先运行该命令）指定编辑器",
+    callback: () => {
+      let name = "（先运行该命令）指定编辑器"
+      is_chang_view = true
+      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
+      is_chang_view = false
+      console.log(`【${name}】\n`, "指定成功");
+    }
+  }
+]
+
+/** 命令列表 */
+export let command_list = [
   {
     name: "（慎用）运行选中片段",
     callback: () => {
       let name = "（慎用）运行选中片段"
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 获取编辑状态失败`); return}
+      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
       console.log(`【${name}】\n`, "（暂时无法使用该功能）");
       /*try{
         eval(editVar.editor.getSelection())
@@ -41,7 +55,7 @@ let command_list = [
     name: "获取view、editor、editorView",
     callback: () => {
       let name = "获取view、editor、editorView"
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 获取编辑状态失败`); return}
+      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
       console.log(`【${name}】\n`, editVar);
     }
   },
@@ -49,7 +63,7 @@ let command_list = [
     name: "获取光标相关",
     callback: () => {
       let name = "获取光标相关"
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 获取编辑状态失败`); return}
+      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
       console.log(`【${name}】`,
       "\n【光标的位置】\n", `第${editVar.editor.getCursor().line}行的第${editVar.editor.getCursor().ch}个字符`,
       "\n【选择的内容】\n", editVar.editor.getSelection());
@@ -59,17 +73,35 @@ let command_list = [
     name: "获取md全文",
     callback: () => {
       let name = "获取md全文"
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 获取编辑状态失败`); return}
+      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
       console.log(`【${name}】`,
       "\n【总行数】\n", editVar.editor.lineCount(), 
       "\n【内容】\n", editVar.editor.getValue());
     }
   },
   {
+    name: "启用事件监听",
+    callback: () => {
+      let name = "启用事件监听"
+      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
+      let dvjsContent = `console.log("【${name}】\\n", app.vault.getMarkdownFiles())`
+      editVar.editor.replaceSelection(
+        "\n```dataviewjs\n"+
+        `${dvjsContent}\n`+
+        `dv.list(["【${name}】输出见控制台"])\n`+
+        "```\n"
+      )
+    }
+  },
+  {
+    name: "-------------",
+    callback: () => {}
+  },
+  {
     name: "dvjs - 获取当前文档",
     callback: () => {
       let name = "dvjs - 获取当前文档"
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 获取编辑状态失败`); return}
+      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
       let dvjsContent = `console.log("【${name}】\\n", dv.current().file)`
       editVar.editor.replaceSelection(
         "```dataviewjs\n"+
@@ -83,42 +115,30 @@ let command_list = [
     name: "dvjs - 获取当前库",
     callback: () => {
       let name = "dvjs - 获取当前库"
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 获取编辑状态失败`); return}
+      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
       let dvjsContent = `console.log("【${name}】\\n", app.vault.getMarkdownFiles())`
       editVar.editor.replaceSelection(
-        "```dataviewjs\n"+
+        "\n```dataviewjs\n"+
         `${dvjsContent}\n`+
         `dv.list(["【${name}】输出见控制台"])\n`+
-        "```"
-      )
-    }
-  },
-  {
-    name: "启用事件监听",
-    callback: () => {
-      let name = "启用事件监听"
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 获取编辑状态失败`); return}
-      let dvjsContent = `console.log("【${name}】\\n", app.vault.getMarkdownFiles())`
-      editVar.editor.replaceSelection(
-        "```dataviewjs\n"+
-        `${dvjsContent}\n`+
-        `dv.list(["【${name}】输出见控制台"])\n`+
-        "```"
+        "```\n"
       )
     }
   },
 ]
 
 /** 获取编辑相关的变量 */
+let is_chang_view = true
+let prev_view: View|null = null
 function get_edit_variable(){
-  const view: View|null = this.app.workspace.getActiveViewOfType(MarkdownView); // 不在编辑模式会返回null
-  if (!view) return null
+  if (is_chang_view) prev_view = this.app.workspace.getActiveViewOfType(MarkdownView); // 未聚焦到md文档会返回null
+  if (!prev_view) return null
     // @ts-ignore 这里会说View没有editor属性
-  const editor: Editor = view.editor
+  const editor: Editor = prev_view.editor
       // @ts-ignore 这里会说Editor没有cm属性
   const editorView: EditorView = editor.cm
   return {
-    view: view, 
+    view: prev_view, 
     editor: editor, 
     editorView: editorView
   }

@@ -1,0 +1,6 @@
+.view-content li{
+    list-style: none;
+}
+.view-content li:hover{
+    cursor: pointer;
+}
