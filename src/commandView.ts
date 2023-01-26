@@ -23,8 +23,11 @@ export class CommandView extends ItemView {
     const container = this.containerEl.children[1];
     container.empty();
     for (let command_item of command_list){
-      const p = container.createEl("li", { text: command_item.name })
-      p.onclick = command_item.callback
+      const ul = container.createEl("ul", { text: command_item.name })
+      for (let command_item2 of command_item.children){
+        const li = container.createEl("li", { text: command_item2.name })
+        li.onclick = command_item2.callback
+      }
     }
   }
 }

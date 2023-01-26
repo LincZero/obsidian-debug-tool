@@ -21,110 +21,150 @@ export let command_list_1 = [
     callback: () => {
       let name = "（先运行该命令）指定编辑器"
       is_chang_view = true
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
+      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n变量获取失败。请先确保先聚焦到md文档再运行此命令`); return}
       is_chang_view = false
       console.log(`【${name}】\n`, "指定成功");
     }
   }
 ]
 
+function evalPro(str: string) {
+  var Fn = Function;
+  return new Fn('return ' + str)();
+}
+
 /** 命令列表 */
 export let command_list = [
   {
-    name: "（慎用）运行选中片段",
-    callback: () => {
-      let name = "（慎用）运行选中片段"
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
-      console.log(`【${name}】\n`, "（暂时无法使用该功能）");
-      /*try{
-        eval(editVar.editor.getSelection())
-      }
-      catch{
-        console.log("cann't use eval function")
-      }*/
-    }
+    name: "手册类",
+    children: [
+      {
+        name: "获取常用编程手册",
+        callback: () => {
+          let name = "获取常用编程手册"
+          console.log(`【${name}】\n${help_doc}`);
+        }
+      },
+    ]
   },
   {
-    name: "获取常用编程手册",
-    callback: () => {
-      let name = "获取常用编程手册"
-      console.log(`【${name}】\n${help_doc}`);
-    }
+    name: "编辑器类",
+    children: [
+      {
+        name: "（慎用）运行选中片段",
+        callback: () => {
+          let name = "（慎用）运行选中片段"
+          let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n变量获取失败。请先聚焦到md文档并Ctrl+P运行：指定编辑器`); return}
+          console.log(`【${name}】\n`, "(↓↓↓)");
+          try{
+            evalPro(editVar.editor.getSelection())
+          }
+          catch{
+            console.log("cann't use eval function")
+          }
+        }
+      },
+      {
+        name: "获取view、editor、editorView",
+        callback: () => {
+          let name = "获取view、editor、editorView"
+          let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n变量获取失败。请先聚焦到md文档并Ctrl+P运行：指定编辑器`); return}
+          console.log(`【${name}】\n`, editVar);
+        }
+      },
+      {
+        name: "获取光标相关",
+        callback: () => {
+          let name = "获取光标相关"
+          let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n变量获取失败。请先聚焦到md文档并Ctrl+P运行：指定编辑器`); return}
+          console.log(`【${name}】`,
+          "\n【光标的位置】\n", `第${editVar.editor.getCursor().line}行的第${editVar.editor.getCursor().ch}个字符`,
+          "\n【选择的内容】\n", editVar.editor.getSelection());
+        }
+      },
+      {
+        name: "获取md全文",
+        callback: () => {
+          let name = "获取md全文"
+          let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n变量获取失败。请先聚焦到md文档并Ctrl+P运行：指定编辑器`); return}
+          console.log(`【${name}】`,
+          "\n【总行数】\n", editVar.editor.lineCount(), 
+          "\n【内容】\n", editVar.editor.getValue());
+        }
+      },
+    ]
   },
   {
-    name: "获取view、editor、editorView",
-    callback: () => {
-      let name = "获取view、editor、editorView"
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
-      console.log(`【${name}】\n`, editVar);
-    }
+    name: "DOM类",
+    children: [
+      {
+        name: "打印当前document",
+        callback: () => {
+          let name = "打印当前document"
+          console.log(`【${name}】\n`, document);
+        }
+      },
+      {
+        name: "打印当前主workspace-leaf",
+        callback: () => {
+          let name = "打印当前主workspace-leaf"
+          console.log(`【${name}】\n`, document.getElementsByClassName("mod-root"));
+        }
+      },
+      {
+        name: "打印当前活动窗口",
+        callback: () => {
+          let name = "打印当前活动窗口"
+          console.log(`【${name}】\n`, document.getElementsByClassName("mod-active"));
+        }
+      },
+    ]
   },
   {
-    name: "获取光标相关",
-    callback: () => {
-      let name = "获取光标相关"
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
-      console.log(`【${name}】`,
-      "\n【光标的位置】\n", `第${editVar.editor.getCursor().line}行的第${editVar.editor.getCursor().ch}个字符`,
-      "\n【选择的内容】\n", editVar.editor.getSelection());
-    }
+    name: "监听类",
+    children: [
+      {
+        name: "启用事件监听",
+        callback: () => {
+          let name = "启用事件监听"
+          console.log(`【${name}】\n（该功能未实现）`);
+        }
+      },
+    ]
   },
   {
-    name: "获取md全文",
-    callback: () => {
-      let name = "获取md全文"
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
-      console.log(`【${name}】`,
-      "\n【总行数】\n", editVar.editor.lineCount(), 
-      "\n【内容】\n", editVar.editor.getValue());
-    }
-  },
-  {
-    name: "启用事件监听",
-    callback: () => {
-      let name = "启用事件监听"
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
-      let dvjsContent = `console.log("【${name}】\\n", app.vault.getMarkdownFiles())`
-      editVar.editor.replaceSelection(
-        "\n```dataviewjs\n"+
-        `${dvjsContent}\n`+
-        `dv.list(["【${name}】输出见控制台"])\n`+
-        "```\n"
-      )
-    }
-  },
-  {
-    name: "-------------",
-    callback: () => {}
-  },
-  {
-    name: "dvjs - 获取当前文档",
-    callback: () => {
-      let name = "dvjs - 获取当前文档"
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
-      let dvjsContent = `console.log("【${name}】\\n", dv.current().file)`
-      editVar.editor.replaceSelection(
-        "```dataviewjs\n"+
-        `${dvjsContent}\n`+
-        `dv.list(["【${name}】输出见控制台"])\n`+
-        "```"
-      )
-    }
-  },
-  {
-    name: "dvjs - 获取当前库",
-    callback: () => {
-      let name = "dvjs - 获取当前库"
-      let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n未聚焦到md文档，变量获取失败`); return}
-      let dvjsContent = `console.log("【${name}】\\n", app.vault.getMarkdownFiles())`
-      editVar.editor.replaceSelection(
-        "\n```dataviewjs\n"+
-        `${dvjsContent}\n`+
-        `dv.list(["【${name}】输出见控制台"])\n`+
-        "```\n"
-      )
-    }
-  },
+    name: "dvjs类",
+    children: [
+      {
+        name: "dvjs - 获取当前文档",
+        callback: () => {
+          let name = "dvjs - 获取当前文档"
+          let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n变量获取失败。请先聚焦到md文档并Ctrl+P运行：指定编辑器`); return}
+          let dvjsContent = `console.log("【${name}】\\n", dv.current().file)`
+          editVar.editor.replaceSelection(
+            "\n```dataviewjs\n"+
+            `${dvjsContent}\n`+
+            `dv.list(["【${name}】输出见控制台"])\n`+
+            "```\n"
+          )
+        }
+      },
+      {
+        name: "dvjs - 获取当前库",
+        callback: () => {
+          let name = "dvjs - 获取当前库"
+          let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n变量获取失败。请先聚焦到md文档并Ctrl+P运行：指定编辑器`); return}
+          let dvjsContent = `console.log("【${name}】\\n", app.vault.getMarkdownFiles())`
+          editVar.editor.replaceSelection(
+            "\n```dataviewjs\n"+
+            `${dvjsContent}\n`+
+            `dv.list(["【${name}】输出见控制台"])\n`+
+            "```\n"
+          )
+        }
+      },
+    ]
+  }
 ]
 
 /** 获取编辑相关的变量 */
