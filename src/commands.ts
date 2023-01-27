@@ -87,7 +87,7 @@ export let command_list = [
           for (let i=0; i<=editVar.editor.getCursor("to").line; i++){
             if (editVar.editor.getCursor("from").line == i) {n_from = n_to+editVar.editor.getCursor("from").ch}
             if (editVar.editor.getCursor("to").line == i) {n_to = n_to+editVar.editor.getCursor("to").ch; break;}
-            n_to += list_text[i].length
+            n_to += list_text[i].length+1 // 一个换行符+1
           }
           console.log(`【${name}】`,
             {
@@ -118,6 +118,8 @@ export let command_list = [
           let name = "获取md编辑器dom"
           let editVar = get_edit_variable(); if (!editVar) {console.log(`【${name}】 \n变量获取失败。请先聚焦到md文档并Ctrl+P运行：指定编辑器`); return}
           console.log(`【${name}】\n`, prev_md_dom);
+          // @ts-ignore
+          console.log(`【${name}二】\n`, editVar.editor.containerEl);
         }
       },
       {
